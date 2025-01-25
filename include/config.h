@@ -1,0 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define KILO_VERSION "0.0.1"
+#define CTRL_KEY(k) ((k) & 0x1f) //Bitmap applied to the ASCII value of the key pressed to strip away the 2 MSB (Retaining 5 bits). Take 'A' (65: 1000001) => 'C-a' (1: 00001)
+
+#endif
