@@ -11,6 +11,7 @@ typedef struct erow {
 struct editorConfig {
   int cx, cy;
   int rowoff;
+  int coloff;
   struct termios orig_termios; //stores the original terminal configuration to return to after exiting the program
   int screencols;
   int screenrows;
