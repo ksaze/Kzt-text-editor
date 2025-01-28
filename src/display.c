@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,9 +7,6 @@
 
 #include <editorconfig.h>
 #include <display.h>
-#include <config.h>
-
-
 
 void abAppend(abuf* ab, const char* s, int len){
   char* new = realloc(ab->b, ab->len + len);
@@ -23,23 +22,42 @@ void abFree(abuf* ab){
   free(ab->b);
 }
 
+
+void editorScroll(){
+  if (E.cy < E.rowoff){
+    E.rowoff = E.cy;
+  }
+
+  if (E.cy >= E.rowoff + E.screenrows){
+    E.rowoff = E.cy - E.screenrows + 1;
+  }
+}
+
 void editorDrawRows(abuf *ab) {
   for (int y = 0; y < E.screenrows; y++){
-    if (y == E.screenrows/3) {
-      char footer[80];
-      int footerlen = snprintf(footer, sizeof(footer), "kzt editor --version %s", KILO_VERSION);
-      if (footerlen > E.screencols) footerlen = E.screencols;
+    int filerow = y + E.rowoff;
+    if (filerow >= E.numrows){
+      if (E.numrows == 0 && y == E.screenrows/3) {
+        char welcome[80];
+        int welcomelen = snprintf(welcome, sizeof(welcome), "kzt editor --version %s", KZT_VERSION);
+        if (welcomelen > E.screencols) welcomelen = E.screencols;
 
-      int padding = (E.screencols - footerlen)/2;
-      if (padding){
-        abAppend(ab, "~", 1);
-        padding--;
+        int padding = (E.screencols - welcomelen)/2;
+        if (padding){
+          abAppend(ab, "~", 1);
+          padding--;
+        }
+        while (padding--) abAppend(ab, " ", 1);
+        abAppend(ab, welcome, welcomelen);
       }
-      while (padding--) abAppend(ab, " ", 1);
-      abAppend(ab, footer, footerlen);
+      else{
+        abAppend(ab, "~", 1);
+      }
     }
     else{
-      abAppend(ab, "~", 1);
+      int len = E.row[filerow].size;
+      if (len > E.screencols) len = E.screencols;
+      abAppend(ab, E.row[filerow].chars, len);
     }
 
     abAppend(ab, "\x1b[K", 3); // "K" is the escape sequence for clearing the given cursor. 0 (def) for right of the cursor, 1 for the left, and 2 for the entire line
@@ -50,6 +68,8 @@ void editorDrawRows(abuf *ab) {
 }
 
 void editorRefreshScreen() {
+  editorScroll();
+
   abuf ab = ABUF_INIT;
   
   abAppend(&ab, "\x1b[?25l", 6); //"l" is the escape sequence for reset mode (disable). In this case ?25 is used for disabling the cursor while rendering.
@@ -58,7 +78,7 @@ void editorRefreshScreen() {
   editorDrawRows(&ab);
 
   char buf[32];
-  snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy+1, E.cx+1); // Move the cursor to the position specified in the editor config 
+  snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy-E.rowoff+1, E.cx+1); // Move the cursor to the position specified in the editor config 
   abAppend(&ab, buf, strlen(buf));
 
   abAppend(&ab, "\x1b[?25h", 6); // 'h' is the escape sequence for set mode. ?25 now turns the cursor back on .

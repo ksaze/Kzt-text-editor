@@ -1,10 +1,11 @@
+#include <config.h>
+
 #include <unistd.h>
 #include <stdlib.h>
 
 #include <util.h>
 #include <editorconfig.h>
 #include <terminal.h>
-#include <config.h>
 
 void editorMoveCursor(int key){
   switch (key){
@@ -15,7 +16,7 @@ void editorMoveCursor(int key){
       if (E.cx != E.screencols - 1) E.cx++;
       break;
     case ARROW_DOWN:
-      if (E.cy != E.screenrows - 1 ) E.cy++;
+      if (E.cy < E.numrows) E.cy++;
       break;
     case ARROW_UP:
       if (E.cy != 0) E.cy--;
