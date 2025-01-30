@@ -11,6 +11,8 @@ typedef struct abuf {
 void abAppend(abuf* ab, const char* s, int len);
 void abFree(abuf* ab);
 void editorDrawRows(abuf* ab);
+void editorDrawStatusBar(abuf* ab);
 void editorRefreshScreen();
+void editorSetStatusMessage(const char* fmt, ...);
 
 #endif

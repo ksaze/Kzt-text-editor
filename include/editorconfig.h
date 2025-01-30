@@ -2,6 +2,7 @@
 #define EDITORCONFIG_H
 
 #include <termios.h>
+#include <time.h>
 
 typedef struct erow {
   int size;
@@ -17,6 +18,10 @@ struct editorConfig {
   int screenrows;
   int numrows;
   erow* row;
+  char* filename;
+  char statusmsg[80];
+  time_t statusmsg_time;
+
 };
 
 extern struct editorConfig E;

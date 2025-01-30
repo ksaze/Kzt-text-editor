@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <unistd.h>
 
 #include <editorconfig.h>
@@ -71,10 +72,42 @@ void editorDrawRows(abuf *ab) {
       abAppend(ab, &E.row[filerow].chars[E.coloff], len);
     }
 
-    abAppend(ab, "\x1b[K", 3); // "K" is the escape sequence for clearing the given cursor. 0 (def) for right of the cursor, 1 for the left, and 2 for the entire line
-    if (y < E.screenrows - 1){
-      abAppend(ab, "\r\n", 2);
-    }
+    abAppend(ab, "\x1b[K", 3); // "K" is the escape sequence for clearing the line for a given cursor. 0 (def) for right of the cursor, 1 for the left, and 2 for the entire line
+    abAppend(ab, "\r\n", 2);
+    
+  }
+}
+
+void editorDrawStatusBar(struct abuf *ab) {
+  abAppend(ab, "\x1b[7m", 4); // Invert color by turning on 7 argument in Select Graphic Rendition (m)
+  char status[80], rstatus[80];
+
+  int len = snprintf(status, sizeof(status), "%.20s - %d lines",
+    E.filename ? E.filename : "[No Name]", E.numrows);
+  int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d",
+    E.cy + 1, E.numrows);
+
+  if (len > E.screencols) len = E.screencols;
+  abAppend(ab, status, len);
+
+  while (E.screencols - len > rlen) { // Add space until there is only space for the status message
+    abAppend(ab, " ", 1);
+    len++;
+  }
+  abAppend(ab, rstatus, rlen);
+
+  abAppend(ab, "\x1b[m", 3); // Go back to normal graphic rendering
+  abAppend(ab, "\r\n", 2); // Line for status message
+}
+
+void editorDrawMessageBar(struct abuf *ab){
+  abAppend(ab, "\x1b[K", 3);
+
+  int msglen = strlen(E.statusmsg);
+  if (msglen > E.screencols) msglen = E.screencols;
+
+  if (msglen && time(NULL) - E.statusmsg_time < 5){
+    abAppend(ab, E.statusmsg, msglen);
   }
 }
 
@@ -87,6 +120,8 @@ void editorRefreshScreen() {
   abAppend(&ab, "\x1b[H", 3); // "H" is the escape sequence for cursor position. Default value is already 1;1.
 
   editorDrawRows(&ab);
+  editorDrawStatusBar(&ab);
+  editorDrawMessageBar(&ab);
 
   char buf[32];
   snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy-E.rowoff+1, E.cx-E.coloff+1); // Move the cursor to the position specified in the editor config 
@@ -96,4 +131,12 @@ void editorRefreshScreen() {
   
   write(STDOUT_FILENO, ab.b, ab.len); //Write the entire buffer to render current screen.
   abFree(&ab);
+}
+
+void editorSetStatusMessage(const char* fmt, ...){
+  va_list ap;
+  va_start(ap, fmt);
+  vsnprintf(E.statusmsg, sizeof(E.statusmsg), fmt, ap);
+  va_end(ap);
+  E.statusmsg_time = time(NULL);
 }
