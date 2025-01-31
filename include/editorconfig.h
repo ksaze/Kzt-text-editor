@@ -6,11 +6,14 @@
 
 typedef struct erow {
   int size;
+  int rsize;
   char* chars;
+  char* render;
 } erow;
 
 struct editorConfig {
   int cx, cy;
+  int rx;
   int rowoff;
   int coloff;
   struct termios orig_termios; //stores the original terminal configuration to return to after exiting the program

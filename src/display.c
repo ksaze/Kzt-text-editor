@@ -23,8 +23,23 @@ void abFree(abuf* ab){
   free(ab->b);
 }
 
+int editorCxToRx(erow *row, int cx){
+  int rx = 0;
+  for (int i = 0; i < cx; i++){
+    if (row->chars[i] == '\t'){
+      rx += (TAB_STOP - 1) - (rx % TAB_STOP);
+    }
+    rx++;
+  }
+  return rx;
+}
 
 void editorScroll(){
+  E.rx = 0;
+  if (E.cy < E.numrows){
+    E.rx = editorCxToRx(&E.row[E.cy], E.cx);
+  }
+
   // Vertical Scroll
   if (E.cy < E.rowoff){
     E.rowoff = E.cy;
@@ -35,12 +50,12 @@ void editorScroll(){
   }
 
   // Horizontal Scroll
-  if (E.cx < E.coloff){
-    E.coloff = E.cx;
+  if (E.rx < E.coloff){
+    E.coloff = E.rx;
   }
 
-  else if (E.cx >= E.coloff + E.screencols){
-    E.coloff = E.cx - E.screencols + 1;
+  else if (E.rx >= E.coloff + E.screencols){
+    E.coloff = E.rx - E.screencols + 1;
   }
 }
 
@@ -66,10 +81,10 @@ void editorDrawRows(abuf *ab) {
       }
     }
     else{
-      int len = E.row[filerow].size - E.coloff;
+      int len = E.row[filerow].rsize - E.coloff;
       if (len < 0) len = 0;
       if (len > E.screencols) len = E.screencols;
-      abAppend(ab, &E.row[filerow].chars[E.coloff], len);
+      abAppend(ab, &E.row[filerow].render[E.coloff], len);
     }
 
     abAppend(ab, "\x1b[K", 3); // "K" is the escape sequence for clearing the line for a given cursor. 0 (def) for right of the cursor, 1 for the left, and 2 for the entire line
@@ -124,7 +139,7 @@ void editorRefreshScreen() {
   editorDrawMessageBar(&ab);
 
   char buf[32];
-  snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy-E.rowoff+1, E.cx-E.coloff+1); // Move the cursor to the position specified in the editor config 
+  snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy-E.rowoff+1, E.rx-E.coloff+1); // Move the cursor to the position specified in the editor config 
   abAppend(&ab, buf, strlen(buf));
 
   abAppend(&ab, "\x1b[?25h", 6); // 'h' is the escape sequence for set mode. ?25 now turns the cursor back on .
