@@ -6,6 +6,8 @@
 #include <util.h>
 #include <editorconfig.h>
 #include <terminal.h>
+#include <editor.h>
+#include <fileio.h>
 
 void editorMoveCursor(int key){
   erow* row = (E.cy >= E.numrows) ? NULL : &E.row[E.cy];
@@ -52,6 +54,10 @@ void editorProcessKeyPress(){
   int c = editorReadKey();
 
   switch (c){
+    case '\r':
+      // TODO 
+      break;
+
     case CTRL_KEY('q'):
       // Clear the screen and position the cursor 
       write(STDOUT_FILENO, "\x1b[2J", 4); 
@@ -59,13 +65,23 @@ void editorProcessKeyPress(){
       exit(0);
       break;
 
+    case CTRL_KEY('s'):
+      editorSave();
+      break;
+
     case HOME_KEY:
       E.cx = 0; break;
+
     case END_KEY:
       if (E.cy < E.numrows)
         E.cx = E.row[E.cy].size;
-    break;
+      break;
 
+    case BACKSPACE:
+    case CTRL_KEY('h'):
+    case DEL_KEY:
+      // TODO 
+      break;
     case PAGE_UP:
     case PAGE_DOWN:
       { 
@@ -87,6 +103,14 @@ void editorProcessKeyPress(){
     case ARROW_RIGHT:
     case ARROW_LEFT:
       editorMoveCursor(c); break;
+
+    case CTRL_KEY('l'):
+    case '\x1b':
+      // TODO
+      break;
+
+    default:
+      editorInsertChar(c); break;
   }
 }
 

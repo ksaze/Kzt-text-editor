@@ -2,6 +2,7 @@
 #define UTIL_H
 
 enum editorKey {
+  BACKSPACE = 127,
   ARROW_LEFT = 1000,
   ARROW_RIGHT,
   ARROW_UP,
@@ -14,5 +15,6 @@ enum editorKey {
 };
 
 void die(const char *s);
+const char* getFileNameFromPath(const char* path);
 
 #endif

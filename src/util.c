@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void die(const char *s){
   // Clear the screen and position the cursor 
@@ -9,4 +10,9 @@ void die(const char *s){
 
   perror(s);
   exit(1);
+}
+
+const char* getFileNameFromPath(const char* path){
+  const char* filename = strrchr(path, '/');
+  return (filename == NULL) ? path : (filename + 1);
 }

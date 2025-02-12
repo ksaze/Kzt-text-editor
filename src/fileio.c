@@ -1,12 +1,16 @@
 #include <config.h>
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include <editorconfig.h>
 #include <util.h>
+#include <display.h>
 
 void editorRowRenderTab(erow* row){
   int tabs = 0;
@@ -46,6 +50,7 @@ void editorAppendRow(char *s, size_t len){
   editorRowRenderTab(&E.row[at]);
 
   E.numrows++;
+  E.dirty++;
 }
 
 void editorRowInsertChar(erow* row, int at, int c){
@@ -55,6 +60,27 @@ void editorRowInsertChar(erow* row, int at, int c){
   row->size++;
   row->chars[at] = c;
   editorRowRenderTab(row);
+  E.dirty++;
+}
+
+char* editorRowsToString(int* buflen){
+  int totlen = 0;
+  for (int i = 0; i < E.numrows; i++){
+    totlen += E.row[i].size + 1; 
+  }
+  *buflen = totlen;
+
+  char *buf = malloc(totlen);
+  char *p = buf;
+
+  for (int i = 0; i < E.numrows; i++){
+    memcpy(p, E.row[i].chars, E.row[i].size);
+    p += E.row[i].size;
+    *p = '\n';
+    p++;
+  }
+
+  return buf;
 }
 
 void editorOpen(char* filename){
@@ -76,4 +102,33 @@ void editorOpen(char* filename){
 
   free(line);
   fclose(fp);
+  E.dirty = 0;
+}
+
+void editorSave(){
+  if (E.filename == NULL) return;
+
+  int len;
+  char *buf = editorRowsToString(&len);
+
+  int fd = open(E.filename, O_RDWR | O_CREAT, 0644);
+  if (fd == -1) {
+    free(buf);
+    return;
+  }
+
+  if (ftruncate(fd, len) == -1) {
+    close(fd); free(buf);
+    return;
+  }
+
+  if (write(fd, buf, len) != len){
+    editorSetStatusMessage("Save failed. I/O error: %s", strerror(errno));
+    close(fd); free(buf);
+    return;
+  }
+  
+  E.dirty = 0;
+  editorSetStatusMessage("%d bytes written to %s", len, getFileNameFromPath(E.filename));
+  close(fd); free(buf);
 }

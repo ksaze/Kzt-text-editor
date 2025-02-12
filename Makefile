@@ -3,7 +3,7 @@ CFLAGS = -Wall -Iinclude -Wextra -pedantic -std=c99
 SRC_DIR = src
 INCLUDE_DIR = include
 OBJ_DIR = obj
-OBJ_FILES = $(OBJ_DIR)/display.o $(OBJ_DIR)/input.o $(OBJ_DIR)/main.o $(OBJ_DIR)/terminal.o $(OBJ_DIR)/util.o $(OBJ_DIR)/fileio.o
+OBJ_FILES = $(OBJ_DIR)/display.o $(OBJ_DIR)/input.o $(OBJ_DIR)/main.o $(OBJ_DIR)/terminal.o $(OBJ_DIR)/util.o $(OBJ_DIR)/fileio.o $(OBJ_DIR)/editor.o
 TARGET = kzt
 
 # Rule to compile .c files into .o files
