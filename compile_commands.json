@@ -1,0 +1,121 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/display.o",
+      "src/display.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/display.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/display.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/editor.o",
+      "src/editor.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/editor.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/editor.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/fileio.o",
+      "src/fileio.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/fileio.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/fileio.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/input.o",
+      "src/input.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/input.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/input.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/main.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/terminal.o",
+      "src/terminal.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/terminal.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/terminal.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Iinclude",
+      "-Wextra",
+      "-pedantic",
+      "-std=c99",
+      "-c",
+      "-o",
+      "obj/util.o",
+      "src/util.c"
+    ],
+    "directory": "/home/akshat/workspace/Kzt-text-editor",
+    "file": "/home/akshat/workspace/Kzt-text-editor/src/util.c",
+    "output": "/home/akshat/workspace/Kzt-text-editor/obj/util.o"
+  }
+]

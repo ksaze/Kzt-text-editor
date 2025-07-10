@@ -112,7 +112,7 @@ void editorDrawStatusBar(struct abuf *ab) {
     abAppend(ab, " ", 1);
     len++;
   }
-  abAppend(ab, rstatus, rlen);
+    abAppend(ab, rstatus, rlen);
 
   abAppend(ab, "\x1b[m", 3); // Go back to normal graphic rendering
   abAppend(ab, "\r\n", 2); // Line for status message
